@@ -13,27 +13,30 @@ struct begikas
     string name = "placeholder";
     int minutes = 0;
     int sekundes = 0;
-    int laikas = 0;
+    int laikas = -1;
 };
 
 ifstream duom("Duomenys.txt");
+ofstream rez("Rezultatai.txt");
 
 int read(begikas begikai[8]);
-int fastest(begikas begikai[8], int n);
-void write(begikas begikai[8], int n);
+void fastest(vector<begikas>& greiciausi, begikas begikai[8], int n);
+void write(vector<begikas> greiciausi);
 
 int main()
 {
     int n;
+    vector<begikas> greiciausi;
     duom >> n;
+
     for (int i = 0; i < n; i++)
     {
         int begiku_skaicius;
         begikas begikai[8];
         begiku_skaicius=read(begikai);
-        //fastest(begikai, begiku_skaicius);
-        write(begikai, begiku_skaicius);
+        fastest(greiciausi, begikai, begiku_skaicius);
     }
+    write(greiciausi);
     return 0;
 }
 
@@ -47,38 +50,52 @@ int read(begikas begikai[8])
         duom.ignore();
         duom.get(temp, 21);
         begikai[i].name = temp;
-        cout << begikai[i].name << '\n';
+        //cout << begikai[i].name << '\n';
         duom >> begikai[i].minutes;
         duom >> begikai[i].sekundes;
         begikai[i].laikas = begikai[i].sekundes + begikai[i].minutes * 60;
     }
+        for (int i = 0; i < n; i++)
+    {
+        cout << begikai[i].name << ' ';
+        cout << begikai[i].minutes << ' ';
+        cout << begikai[i].sekundes << ' ';
+        cout << begikai[i].laikas << '\n';
+    }
     return n;
 }
 
-int fastest(begikas begikai[8], int n)
+void fastest(vector<begikas>& greiciausi, begikas begikai[8], int n)
 {
-    int x = 0;
     int praeito_laikas = begikai[0].laikas;
+    n=n/2;
+    int x=0;
     for (int i = 0; i < n; i++)
     {
-        if (begikai[i].laikas < praeito_laikas && begikai[i].laikas != -1)
+        for(int j=0; j<8; j++)
         {
-            x = i;
+                if (begikai[j].laikas < praeito_laikas && begikai[j].laikas != -1)
+            {
+                x = j;
+            }
         }
+        cout << '\n';
+        cout << '\n';
+        cout << '\n';
+        cout << begikai[x].name<< '\n';
+        greiciausi.push_back(begikai[x]);
+        begikai[x].laikas=-1;
     }
-    cout << "begikai[x].laikas" << begikai[x].laikas << '\n';
-    begikai[x].laikas = -1;
-    return x;
+    //cout << "begikai[x].laikas" << begikai[x].laikas << '\n';
 }
 
-void write(begikas begikai[8], int n)
+void write(vector<begikas> greiciausi)
 {
-    cout << "rsabgiusabgusibgius" << '\n';
-    int n2 = n / 2;
-    ofstream rez("Rezultatai.txt");
-    for (int i = 0; i < n2; i++)
+    //cout << "rsabgiusabgusibgius" << '\n';
+    //ofstream rez("Rezultatai.txt", ios::app);
+    int n=greiciausi.size();
+    for (int i = 0; i < n; i++)
     {
-        int x = fastest(begikai, n);
-        rez << begikai[x].name << ' ' << begikai[x].minutes << ' ' << begikai[x].sekundes << '\n';
+        rez << greiciausi[i].name << ' ' << greiciausi[i].minutes << ' ' << greiciausi[i].sekundes << '\n';
     }
 }
