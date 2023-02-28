@@ -13,27 +13,31 @@ struct begikas
     string name = "placeholder";
     int minutes = 0;
     int sekundes = 0;
-    int laikas = 0;
+    int laikas = -1;
 };
 
 ifstream duom("Duomenys.txt");
+ofstream rez("Rezultatai.txt");
 
 int read(begikas begikai[8]);
-int fastest(begikas begikai[8], int n);
-void write(begikas begikai[8], int n);
+void fastest(vector<begikas>& greiciausi, begikas begikai[8], int n);
+void write(vector<begikas>& greiciausi);
+void my_sort(vector<begikas>& B);
 
 int main()
 {
     int n;
+    vector<begikas> greiciausi;
     duom >> n;
+
     for (int i = 0; i < n; i++)
     {
         int begiku_skaicius;
         begikas begikai[8];
-        begiku_skaicius=read(begikai);
-        //fastest(begikai, begiku_skaicius);
-        write(begikai, begiku_skaicius);
+        begiku_skaicius = read(begikai);
+        fastest(greiciausi, begikai, begiku_skaicius);
     }
+    write(greiciausi);
     return 0;
 }
 
@@ -47,7 +51,6 @@ int read(begikas begikai[8])
         duom.ignore();
         duom.get(temp, 21);
         begikai[i].name = temp;
-        cout << begikai[i].name << '\n';
         duom >> begikai[i].minutes;
         duom >> begikai[i].sekundes;
         begikai[i].laikas = begikai[i].sekundes + begikai[i].minutes * 60;
@@ -55,30 +58,46 @@ int read(begikas begikai[8])
     return n;
 }
 
-int fastest(begikas begikai[8], int n)
+void fastest(vector<begikas>& greiciausi, begikas begikai[8], int n)
 {
-    int x = 0;
-    int praeito_laikas = begikai[0].laikas;
-    for (int i = 0; i < n; i++)
+    int x;
+    for (int i = 0; i < n / 2; i++)
     {
-        if (begikai[i].laikas < praeito_laikas && begikai[i].laikas != -1)
+        int praeito_laikas = INT_MAX;
+        for (int j = 0; j < 8; j++)
         {
-            x = i;
+            if (begikai[j].laikas < praeito_laikas && begikai[j].laikas != -1)
+            {
+                x = j;
+                praeito_laikas = begikai[j].laikas;
+            }
         }
+        greiciausi.push_back(begikai[x]);
+        begikai[x].laikas = -1;
     }
-    cout << "begikai[x].laikas" << begikai[x].laikas << '\n';
-    begikai[x].laikas = -1;
-    return x;
 }
 
-void write(begikas begikai[8], int n)
+void write(vector<begikas>& greiciausi)
 {
-    cout << "rsabgiusabgusibgius" << '\n';
-    int n2 = n / 2;
-    ofstream rez("Rezultatai.txt");
-    for (int i = 0; i < n2; i++)
+    //ofstream rez("Rezultatai.txt", ios::app);
+    int n = greiciausi.size();
+    my_sort(greiciausi);
+    for (int i = 0; i < n; i++)
     {
-        int x = fastest(begikai, n);
-        rez << begikai[x].name << ' ' << begikai[x].minutes << ' ' << begikai[x].sekundes << '\n';
+        rez << greiciausi[i].name << ' ' << greiciausi[i].minutes << ' ' << greiciausi[i].sekundes << '\n';
+    }
+}
+
+void my_sort(vector<begikas>& B)
+{
+    for (int i = 0; i < B.size(); i++)
+    {
+        for (int j = i + 1; j < B.size(); j++)
+        {
+            if (B[i].laikas > B[j].laikas)
+            {
+                swap(B[i], B[j]);
+            }
+        }
     }
 }
