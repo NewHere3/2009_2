@@ -1,10 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <string>
 #include <fstream>
-#include <iomanip>
 #include <algorithm>
-#include <cmath>
 
 using namespace std;
 
@@ -16,16 +13,17 @@ struct begikas
     int laikas = -1;
 };
 
-ifstream duom("Duomenys.txt");
+//ifstream duom("Duomenys.txt");
 ofstream rez("Rezultatai.txt");
 
-int read(begikas begikai[8]);
+int read(ifstream& duom, begikas begikai[8]);
 void fastest(vector<begikas>& greiciausi, begikas begikai[8], int n);
 void write(vector<begikas>& greiciausi);
 void my_sort(vector<begikas>& B);
 
 int main()
 {
+    ifstream duom("Duomenys.txt");
     int n;
     vector<begikas> greiciausi;
     duom >> n;
@@ -34,14 +32,14 @@ int main()
     {
         int begiku_skaicius;
         begikas begikai[8];
-        begiku_skaicius = read(begikai);
+        begiku_skaicius = read(duom ,begikai);
         fastest(greiciausi, begikai, begiku_skaicius);
     }
     write(greiciausi);
     return 0;
 }
 
-int read(begikas begikai[8])
+int read(ifstream& duom, begikas begikai[8])
 {
     int n = 0;
     duom >> n;
